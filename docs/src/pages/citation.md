@@ -9,8 +9,8 @@ If you use ReSearchBench in your research, please cite it as:
   title={ReSearchBench: A Benchmark for Evaluating Agentic Search and Deep Research Discovery, Completeness, and Traversal Depth},
   author={Lee, Hanchung},
   year={2025},
-  url={https://github.com/han/ReSearchBench},
-  note={Software available at \url{https://han.github.io/ReSearchBench/}}
+  url={https://github.com/leehanchung/ReSearchBench},
+  note={Software available at \url{https://leehanchung.github.io/ReSearchBench/}}
 }
 ```
 
