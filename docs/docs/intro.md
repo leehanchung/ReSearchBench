@@ -31,4 +31,4 @@ Framework designed to ensure research reproducibility and validation.
 
 ## Getting Started
 
-Ready to start benchmarking your research? Check out our [Quick Start Guide](./tutorial-basics/getting-started) to begin using ReSearchBench.
+Ready to start benchmarking your research? Get started with ReSearchBench today!
