@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import ResearchBenchmarkChart from '@site/src/components/ResearchBenchmarkChart';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -15,14 +15,6 @@ function HomepageHeader() {
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Get Started with ReSearchBench 🚀
-          </Link>
-        </div>
       </div>
     </header>
   );
@@ -36,7 +28,7 @@ export default function Home() {
       description="Comprehensive research benchmarking platform for evaluating methodologies, tools, and techniques">
       <HomepageHeader />
       <main>
-        <HomepageFeatures />
+        <ResearchBenchmarkChart />
       </main>
     </Layout>
   );
