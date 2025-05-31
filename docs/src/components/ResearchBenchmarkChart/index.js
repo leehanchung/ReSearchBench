@@ -1,11 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-const data = [
-  { model: 'Google Gemini Deep Research', shortName: 'Gemini', score: 53, decimal: 0.257, color: '#4285F4', icon: '🔵' },
-  { model: 'OpenAI ChatGPT Deep Research', shortName: 'ChatGPT', score: 44, decimal: 0.214, color: '#00A67E', icon: '🟢' },
-  { model: 'Grok Deeper Search', shortName: 'Grok', score: 31, decimal: 0.150, color: '#1DA1F2', icon: '🔷' }
-];
+import { benchmarkData } from '../../data/benchmarkData';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -29,6 +24,49 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function ResearchBenchmarkChart() {
+  const [notification, setNotification] = React.useState('');
+
+  const handleCopyToClipboard = async () => {
+    try {
+      const dataText = benchmarkData.map(item => 
+        `${item.model}: ${item.decimal.toFixed(3)}`
+      ).join('\n');
+      const content = `ReSearch Bench Index\n\n${dataText}`;
+      
+      await navigator.clipboard.writeText(content);
+      setNotification('📋 Copied to clipboard!');
+      setTimeout(() => setNotification(''), 2000);
+    } catch (err) {
+      setNotification('❌ Failed to copy to clipboard');
+      setTimeout(() => setNotification(''), 2000);
+    }
+  };
+
+  const handleDownload = () => {
+    try {
+      const dataText = benchmarkData.map(item => 
+        `${item.model},${item.decimal.toFixed(3)}`
+      ).join('\n');
+      const content = `Model,Score\n${dataText}`;
+      
+      const blob = new Blob([content], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'research-bench-data.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      setNotification('📥 File downloaded!');
+      setTimeout(() => setNotification(''), 2000);
+    } catch (err) {
+      setNotification('❌ Failed to download file');
+      setTimeout(() => setNotification(''), 2000);
+    }
+  };
+
   return (
     <div style={{
       display: 'flex',
@@ -39,24 +77,35 @@ export default function ResearchBenchmarkChart() {
     }}>
       {/* Main Chart Section */}
       <div style={{flex: '2'}}>
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: '600',
-          marginBottom: '2rem',
-          color: '#1a1a1a'
-        }}>
+        <h2 
+          id="chart-title"
+          style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            marginBottom: '2rem',
+            color: '#1a1a1a'
+          }}
+        >
           ReSearch Bench Index
         </h2>
         
-        <div style={{
-          height: '400px',
-          padding: '2rem',
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-          border: '1px solid #e1e5e9'
-        }}>
+        <div 
+          role="img"
+          aria-labelledby="chart-title"
+          aria-describedby="chart-description"
+          style={{
+            height: '400px',
+            padding: '2rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            border: '1px solid #e1e5e9'
+          }}
+        >
+          <div id="chart-description" className="sr-only">
+            Bar chart showing ReSearch Bench scores for AI models. Google Gemini Deep Research leads with 0.257, followed by OpenAI ChatGPT Deep Research at 0.214, and Grok Deeper Search at 0.150.
+          </div>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <BarChart data={benchmarkData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis 
                 dataKey="shortName"
@@ -76,7 +125,7 @@ export default function ResearchBenchmarkChart() {
                 dataKey="decimal" 
                 radius={[4, 4, 0, 0]}
               >
-                {data.map((entry, index) => (
+                {benchmarkData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Bar>
@@ -111,26 +160,48 @@ export default function ResearchBenchmarkChart() {
             display: 'flex',
             gap: '8px'
           }}>
-            <button style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '16px',
-              padding: '4px'
-            }}>
+            <button 
+              onClick={handleCopyToClipboard}
+              title="Copy data to clipboard"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '16px',
+                padding: '4px'
+              }}
+            >
               📋
             </button>
-            <button style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '16px',
-              padding: '4px'
-            }}>
+            <button 
+              onClick={handleDownload}
+              title="Download data as CSV"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '16px',
+                padding: '4px'
+              }}
+            >
               📥
             </button>
           </div>
         </div>
+        
+        {notification && (
+          <div style={{
+            fontSize: '12px',
+            padding: '8px',
+            marginBottom: '12px',
+            backgroundColor: notification.includes('❌') ? '#fee' : '#efe',
+            color: notification.includes('❌') ? '#c33' : '#363',
+            borderRadius: '4px',
+            textAlign: 'center'
+          }}>
+            {notification}
+          </div>
+        )}
         
         <p style={{
           fontSize: '14px',
