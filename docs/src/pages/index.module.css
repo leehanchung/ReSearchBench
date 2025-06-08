@@ -16,6 +16,22 @@
   }
 }
 
+/* Mobile optimizations for hero title */
+@media screen and (max-width: 768px) {
+  .heroBanner .hero__title {
+    font-size: 2rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .heroBanner .hero__title {
+    font-size: 1.5rem !important;
+  }
+}
+
 .buttons {
   display: flex;
   align-items: center;
