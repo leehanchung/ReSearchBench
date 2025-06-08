@@ -2,6 +2,25 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { benchmarkData } from '../../data/benchmarkData';
 
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = React.useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200
+  });
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -25,6 +44,9 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function ResearchBenchmarkChart() {
   const [notification, setNotification] = React.useState('');
+  const { width } = useWindowSize();
+  const isMobile = width <= 768;
+  const isSmallMobile = width <= 480;
 
   const handleCopyToClipboard = async () => {
     try {
@@ -70,19 +92,23 @@ export default function ResearchBenchmarkChart() {
   return (
     <div style={{
       display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
       gap: '2rem',
-      padding: '2rem',
+      padding: isMobile ? '1rem' : '2rem',
       maxWidth: '1200px',
       margin: '0 auto'
     }}>
       {/* Main Chart Section */}
-      <div style={{flex: '2'}}>
+      <div style={{
+        flex: isMobile ? '1' : '2',
+        minWidth: 0
+      }}>
         <h2 
           id="chart-title"
           style={{
-            fontSize: '24px',
+            fontSize: isMobile ? '20px' : '24px',
             fontWeight: '600',
-            marginBottom: '2rem',
+            marginBottom: isMobile ? '1rem' : '2rem',
             color: '#1a1a1a'
           }}
         >
@@ -94,8 +120,8 @@ export default function ResearchBenchmarkChart() {
           aria-labelledby="chart-title"
           aria-describedby="chart-description"
           style={{
-            height: '400px',
-            padding: '2rem',
+            height: isMobile ? '300px' : '400px',
+            padding: isMobile ? '1rem' : '2rem',
             backgroundColor: '#ffffff',
             borderRadius: '8px',
             border: '1px solid #e1e5e9'
@@ -105,20 +131,39 @@ export default function ResearchBenchmarkChart() {
             Bar chart showing ReSearch Bench scores for AI models. Google Gemini Deep Research leads with 0.257, followed by OpenAI ChatGPT Deep Research at 0.214, and Grok Deeper Search at 0.150.
           </div>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={benchmarkData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <BarChart 
+              data={benchmarkData} 
+              margin={{ 
+                top: 20, 
+                right: isMobile ? 10 : 30, 
+                left: isMobile ? 10 : 20, 
+                bottom: isMobile ? 40 : 60 
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis 
                 dataKey="shortName"
-                tick={{ fontSize: 12, fill: '#666' }}
+                tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
                 axisLine={{ stroke: '#e1e5e9' }}
                 tickLine={{ stroke: '#e1e5e9' }}
+                angle={isMobile ? -45 : 0}
+                textAnchor={isMobile ? 'end' : 'middle'}
+                height={isMobile ? 60 : 40}
               />
               <YAxis 
                 domain={[0, 1.0]}
-                tick={{ fontSize: 12, fill: '#666' }}
+                tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
                 axisLine={{ stroke: '#e1e5e9' }}
                 tickLine={{ stroke: '#e1e5e9' }}
-                label={{ value: 'ReSearch Bench Score', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                label={{ 
+                  value: 'ReSearch Bench Score', 
+                  angle: -90, 
+                  position: 'insideLeft', 
+                  style: { 
+                    textAnchor: 'middle',
+                    fontSize: isMobile ? '12px' : '14px'
+                  } 
+                }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar 
@@ -138,18 +183,21 @@ export default function ResearchBenchmarkChart() {
       <div style={{
         flex: '1',
         backgroundColor: '#f8f9fa',
-        padding: '2rem',
+        padding: isMobile ? '1.5rem' : '2rem',
         borderRadius: '8px',
-        border: '1px solid #e1e5e9'
+        border: '1px solid #e1e5e9',
+        minWidth: 0
       }}>
         <div style={{
           display: 'flex',
+          flexDirection: isSmallMobile ? 'column' : 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem'
+          alignItems: isSmallMobile ? 'flex-start' : 'center',
+          marginBottom: '1.5rem',
+          gap: isSmallMobile ? '1rem' : '0'
         }}>
           <h3 style={{
-            fontSize: '18px',
+            fontSize: isMobile ? '16px' : '18px',
             fontWeight: '600',
             margin: 0,
             color: '#1a1a1a'
@@ -167,8 +215,10 @@ export default function ResearchBenchmarkChart() {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '16px',
-                padding: '4px'
+                fontSize: isMobile ? '14px' : '16px',
+                padding: isMobile ? '8px' : '4px',
+                minWidth: '32px',
+                minHeight: '32px'
               }}
             >
               📋
@@ -180,8 +230,10 @@ export default function ResearchBenchmarkChart() {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '16px',
-                padding: '4px'
+                fontSize: isMobile ? '14px' : '16px',
+                padding: isMobile ? '8px' : '4px',
+                minWidth: '32px',
+                minHeight: '32px'
               }}
             >
               📥
